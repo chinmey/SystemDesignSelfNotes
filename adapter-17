@@ -1,0 +1,69 @@
+The Adapter design pattern is a structural design pattern that allows incompatible interfaces to work together. It acts as a bridge between two incompatible interfaces by converting the interface of a class into another interface that a client expects. This pattern is particularly useful when you want to integrate a class with an interface that it doesn't match.
+
+Key Components of the Adapter Design Pattern
+Target Interface: Defines the domain-specific interface that the Client uses.
+Client: Uses the Target interface.
+Adaptee: Defines an existing interface that needs adapting.
+Adapter: Implements the Target interface and translates the requests from the Client to the Adapter
+
+
+Legacy Weight Machine (Adaptee)
+This class represents the existing weight machine that provides weight in kilograms.
+
+java
+Copy code
+class WeightMachine {
+    public double getWeightInKg() {
+        return 70.0;  // Example weight in kilograms
+    }
+}
+Target Interface
+This interface represents the expected interface by the new system, which works with pounds.
+
+java
+Copy code
+interface WeightMachineAdapter {
+    double getWeightInPounds();
+}
+Adapter
+This class adapts the WeightMachine to the WeightMachineAdapter interface by converting kilograms to pounds.
+
+java
+Copy code
+class WeightMachineAdapterImpl implements WeightMachineAdapter {
+    private WeightMachine weightMachine;
+
+    public WeightMachineAdapterImpl(WeightMachine weightMachine) {
+        this.weightMachine = weightMachine;
+    }
+
+    @Override
+    public double getWeightInPounds() {
+        return convertKgToPounds(weightMachine.getWeightInKg());
+    }
+
+    private double convertKgToPounds(double weightInKg) {
+        return weightInKg * 2.20462;  // Conversion factor from kilograms to pounds
+    }
+}
+Client Code
+This is the client code that uses the WeightMachineAdapter interface to get the weight in pounds.
+
+java
+Copy code
+public class AdapterPatternDemo {
+    public static void main(String[] args) {
+        WeightMachine weightMachine = new WeightMachine();
+        WeightMachineAdapter weightMachineAdapter = new WeightMachineAdapterImpl(weightMachine);
+
+        System.out.println("Weight in pounds: " + weightMachineAdapter.getWeightInPounds());
+    }
+}
+Explanation
+WeightMachine (Adaptee): This class provides the weight in kilograms.
+WeightMachineAdapter (Target Interface): This interface defines the method to get the weight in pounds.
+WeightMachineAdapterImpl (Adapter): This class implements the WeightMachineAdapter interface and adapts the WeightMachine to provide the weight in pounds by converting the value from kilograms to pounds.
+AdapterPatternDemo (Client): This is the client code that uses the WeightMachineAdapter to get the weight in pounds.
+
+
+

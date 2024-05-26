@@ -1,6 +1,7 @@
 This is used when only certain operations are permitted at particular state of obj , ex imagine a tv and its state of on and off.
 
-he State design pattern allows an object to alter its behavior when its internal state changes. This pattern is used to encapsulate varying behavior for the same object, based on its internal state, into separate state objects and delegate the behavior to the current state object. The pattern falls under the category of behavioral patterns.
+State design pattern allows an object to alter its behavior when its internal state changes. 
+This pattern is used to encapsulate varying behavior for the same object, based on its internal state, into separate state objects and delegate the behavior to the current state object. The pattern falls under the category of behavioral patterns.
 
 Components of the State Pattern
 Context: The class that contains the current state of the object and delegates the behavior to the state object.

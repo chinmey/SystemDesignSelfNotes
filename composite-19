@@ -1,0 +1,102 @@
+Used when we have a tree like structure . (larger object storing similar smaller object etc ) ex : file system etc
+
+The Composite design pattern is a structural pattern that allows you to compose objects into tree structures to represent part-whole hierarchies.
+This pattern lets clients treat individual objects and compositions of objects uniformly. 
+It's particularly useful for representing hierarchical structures where individual elements and compositions of elements need to be treated the same way.
+
+Key Components of the Composite Design Pattern
+Component: The base interface or abstract class for all objects in the composition, both composite and leaf nodes.
+Leaf: A class representing the individual objects in the composition. A leaf cannot have any children.
+Composite: A class representing the composite objects. It can have children, which can be either leaves or other composites.
+Example: Composite Design Pattern in a File System
+Let's model a simple file system where directories can contain both files and other directories.
+
+Component
+This is the base interface for the file system entities.
+
+java
+Copy code
+import java.util.List;
+
+interface FileSystemComponent {
+    void showDetails();
+}
+Leaf
+These are the classes representing individual files.
+
+java
+Copy code
+class File implements FileSystemComponent {
+    private String name;
+    private long size;
+
+    public File(String name, long size) {
+        this.name = name;
+        this.size = size;
+    }
+
+    @Override
+    public void showDetails() {
+        System.out.println("File: " + name + ", Size: " + size + " bytes");
+    }
+}
+Composite
+This is the class representing directories that can contain both files and other directories.
+
+java
+Copy code
+import java.util.ArrayList;
+import java.util.List;
+
+class Directory implements FileSystemComponent {
+    private String name;
+    private List<FileSystemComponent> components = new ArrayList<>();
+
+    public Directory(String name) {
+        this.name = name;
+    }
+
+    public void addComponent(FileSystemComponent component) {
+        components.add(component);
+    }
+
+    public void removeComponent(FileSystemComponent component) {
+        components.remove(component);
+    }
+
+    @Override
+    public void showDetails() {
+        System.out.println("Directory: " + name);
+        for (FileSystemComponent component : components) {
+            component.showDetails();
+        }
+    }
+}
+Client Code
+This is the client code that uses the composite pattern to represent a file system.
+
+java
+Copy code
+public class CompositePatternDemo {
+    public static void main(String[] args) {
+        FileSystemComponent file1 = new File("file1.txt", 1000);
+        FileSystemComponent file2 = new File("file2.txt", 2000);
+        FileSystemComponent file3 = new File("file3.jpg", 3000);
+
+        Directory dir1 = new Directory("dir1");
+        Directory dir2 = new Directory("dir2");
+
+        dir1.addComponent(file1);
+        dir1.addComponent(file2);
+
+        dir2.addComponent(file3);
+        dir2.addComponent(dir1);
+
+        dir2.showDetails();
+    }
+}
+Explanation
+FileSystemComponent (Component): An interface that defines the common operation showDetails for both files and directories.
+File (Leaf): Implements the FileSystemComponent interface and represents individual files.
+Directory (Composite): Also implements the FileSystemComponent interface and can contain both File objects and other Directory objects.
+CompositePatternDemo (Client): The client code that creates a tree structure of directories and files and displays their details.

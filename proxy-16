@@ -1,0 +1,108 @@
+
+The Proxy design pattern is a structural design pattern that provides a surrogate or placeholder for another object to control access to it. It is used to create a representative object that controls access to a more complex or resource-intensive underlying object. The Proxy pattern can be useful in various scenarios such as lazy initialization, access control, logging, and more.
+
+Key Components of the Proxy Design Pattern
+Subject: An interface that defines the common methods that both the RealSubject and the Proxy implement.
+RealSubject: The actual object that the proxy represents. It contains the core functionality.
+Proxy: The surrogate or placeholder that controls access to the RealSubject. It implements the Subject interface and adds additional behavior (such as access control, logging, etc.).
+Types of Proxies
+Virtual Proxy: Delays the creation and initialization of the expensive RealSubject until it is actually needed.
+Protection Proxy: Controls access to the RealSubject by checking permissions before forwarding the request.
+Remote Proxy: Represents an object that exists in a different address space, typically in a different machine or a different part of a distributed system.
+Cache Proxy: Provides temporary storage for results of operations that are expensive to compute or retrieve.
+
+
+Example: Protection Proxy
+Imagine we have a system where certain operations can only be performed by users with specific roles. For example, in a banking system, only users with the role of "Admin" should be able to access certain sensitive operations.
+
+Subject Interface
+java
+Copy code
+interface BankAccount {
+    void withdraw(String user, double amount);
+    void deposit(String user, double amount);
+}
+RealSubject
+java
+Copy code
+class RealBankAccount implements BankAccount {
+    private double balance;
+
+    public RealBankAccount(double initialBalance) {
+        this.balance = initialBalance;
+    }
+
+    @Override
+    public void withdraw(String user, double amount) {
+        if (amount > balance) {
+            System.out.println("Insufficient funds");
+        } else {
+            balance -= amount;
+            System.out.println(user + " withdrew " + amount + ". New balance: " + balance);
+        }
+    }
+
+    @Override
+    public void deposit(String user, double amount) {
+        balance += amount;
+        System.out.println(user + " deposited " + amount + ". New balance: " + balance);
+    }
+}
+Proxy
+java
+Copy code
+class BankAccountProxy implements BankAccount {
+    private RealBankAccount realBankAccount;
+    private List<String> admins;
+
+    public BankAccountProxy(double initialBalance, List<String> admins) {
+        this.realBankAccount = new RealBankAccount(initialBalance);
+        this.admins = admins;
+    }
+
+    private boolean isAdmin(String user) {
+        return admins.contains(user);
+    }
+
+    @Override
+    public void withdraw(String user, double amount) {
+        if (isAdmin(user)) {
+            realBankAccount.withdraw(user, amount);
+        } else {
+            System.out.println("Access denied for user: " + user);
+        }
+    }
+
+    @Override
+    public void deposit(String user, double amount) {
+        if (isAdmin(user)) {
+            realBankAccount.deposit(user, amount);
+        } else {
+            System.out.println("Access denied for user: " + user);
+        }
+    }
+}
+Client Code
+java
+Copy code
+public class ProxyPatternDemo {
+    public static void main(String[] args) {
+        List<String> admins = Arrays.asList("adminUser1", "adminUser2");
+        BankAccount bankAccount = new BankAccountProxy(1000.0, admins);
+
+        // Admin user tries to deposit and withdraw
+        bankAccount.deposit("adminUser1", 500.0);
+        bankAccount.withdraw("adminUser1", 200.0);
+
+        // Non-admin user tries to deposit and withdraw
+        bankAccount.deposit("regularUser", 500.0);
+        bankAccount.withdraw("regularUser", 200.0);
+    }
+}
+Explanation
+BankAccount Interface (Subject): Defines the common interface for both RealBankAccount and BankAccountProxy.
+RealBankAccount (RealSubject): Implements the actual bank account functionality including deposit and withdraw operations.
+BankAccountProxy (Proxy): Controls access to RealBankAccount by checking if the user is an admin before allowing deposit and withdraw operations.
+Good Example
+The above example is a good implementation of the Protection Proxy pattern. The BankAccountProxy checks whether the user is an admin before allowing access to the sensitive methods of RealBankAccount. This ensures that only authorized users can perform critical operations.
+

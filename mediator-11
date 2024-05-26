@@ -2,7 +2,8 @@ This design pattern is used when we have multiple objects and they need to commu
 
 Ex : Airline Management system (multiple planes want to land at same time so how can they communicate), similarly online auction system
 
-The Mediator design pattern defines an object that encapsulates how a set of objects interact. This pattern promotes loose coupling by keeping objects from referring to each other explicitly, and it allows their interaction to be varied independently.
+The Mediator design pattern defines an object that encapsulates how a set of objects interact. This pattern promotes loose coupling by keeping objects from 
+referring to each other explicitly, and it allows their interaction to be varied independently.
 
 Components of the Mediator Pattern
 Mediator Interface: Defines the communication interface for the objects.

@@ -1,0 +1,139 @@
+
+The Decorator design pattern is a structural pattern that allows behavior to be added to individual objects, dynamically,
+without affecting the behavior of other objects from the same class. It involves a set of decorator classes that are used to wrap concrete components. 
+Decorators provide a flexible alternative to subclassing for extending functionality.
+
+Unique thing : decorator relationship with interface is both has-a and is-a
+
+Key Components of the Decorator Pattern
+Component: An interface or abstract class defining the interface for objects that can have responsibilities added to them dynamically.
+ConcreteComponent: A class that implements the Component interface. It is the object to which additional responsibilities can be attached.
+Decorator: An abstract class that implements the Component interface and contains a reference to a Component object. It delegates all operations to this Component object.
+ConcreteDecorator: Classes that extend the Decorator class and add responsibilities to the Component object.
+Example: Decorator Pattern in a Coffee Shop
+Let's consider an example where we have a basic coffee, and we want to add various condiments (like milk, sugar, and chocolate) dynamically.
+
+Component
+This is the interface for coffee.
+
+java
+Copy code
+interface Coffee {
+    double getCost();
+    String getDescription();
+}
+ConcreteComponent
+This is the class for plain coffee.
+
+java
+Copy code
+class SimpleCoffee implements Coffee {
+    @Override
+    public double getCost() {
+        return 5.0; // base cost of coffee
+    }
+
+    @Override
+    public String getDescription() {
+        return "Simple coffee";
+    }
+}
+Decorator
+This is the abstract decorator class that implements the Coffee interface and has a reference to a Coffee object.
+
+java
+Copy code
+abstract class CoffeeDecorator implements Coffee {
+    protected Coffee decoratedCoffee;
+
+    public CoffeeDecorator(Coffee coffee) {
+        this.decoratedCoffee = coffee;
+    }
+
+    @Override
+    public double getCost() {
+        return decoratedCoffee.getCost();
+    }
+
+    @Override
+    public String getDescription() {
+        return decoratedCoffee.getDescription();
+    }
+}
+ConcreteDecorator
+These classes add additional behavior to the Coffee object.
+
+java
+Copy code
+class MilkDecorator extends CoffeeDecorator {
+    public MilkDecorator(Coffee coffee) {
+        super(coffee);
+    }
+
+    @Override
+    public double getCost() {
+        return super.getCost() + 1.5; // cost of milk
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription() + ", milk";
+    }
+}
+
+class SugarDecorator extends CoffeeDecorator {
+    public SugarDecorator(Coffee coffee) {
+        super(coffee);
+    }
+
+    @Override
+    public double getCost() {
+        return super.getCost() + 0.5; // cost of sugar
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription() + ", sugar";
+    }
+}
+
+class ChocolateDecorator extends CoffeeDecorator {
+    public ChocolateDecorator(Coffee coffee) {
+        super(coffee);
+    }
+
+    @Override
+    public double getCost() {
+        return super.getCost() + 2.0; // cost of chocolate
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription() + ", chocolate";
+    }
+}
+Client Code
+This is the client code that uses the decorators to add different condiments to the coffee.
+
+java
+Copy code
+public class DecoratorPatternDemo {
+    public static void main(String[] args) {
+        Coffee coffee = new SimpleCoffee();
+        System.out.println(coffee.getDescription() + " $" + coffee.getCost());
+
+        coffee = new MilkDecorator(coffee);
+        System.out.println(coffee.getDescription() + " $" + coffee.getCost());
+
+        coffee = new SugarDecorator(coffee);
+        System.out.println(coffee.getDescription() + " $" + coffee.getCost());
+
+        coffee = new ChocolateDecorator(coffee);
+        System.out.println(coffee.getDescription() + " $" + coffee.getCost());
+    }
+}
+Explanation
+Coffee (Component): An interface defining the methods getCost and getDescription.
+SimpleCoffee (ConcreteComponent): A class implementing the Coffee interface with a base implementation.
+CoffeeDecorator (Decorator): An abstract class implementing the Coffee interface and containing a reference to a Coffee object.
+MilkDecorator, SugarDecorator, ChocolateDecorator (ConcreteDecorators): Classes extending CoffeeDecorator and adding their own behavior to the getCost and getDescription methods.

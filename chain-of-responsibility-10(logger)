@@ -1,0 +1,78 @@
+The Chain of Responsibility design pattern allows an object to pass a request along a chain of potential handlers until the request is handled. 
+This pattern is particularly useful for scenarios where multiple objects might handle a request, but the handler is not known in advance.
+Example used in ATM,Logger
+
+Components of Chain of Responsibility Pattern
+Handler: Defines an interface for handling requests and optionally forwarding them to the next handler.
+ConcreteHandler: Implements the handler interface and handles requests it is responsible for. It can forward requests to the next handler if it cannot process them.
+Client: Initiates the request to a handler in the chain.
+Example: Logger
+In the context of a logging framework, we can have different levels of logging: DEBUG, INFO, ERROR. Each logger can decide if it wants to handle a log message or 
+pass it to the next logger in the chain.
+
+public abstract class LogProcessor {
+
+    public static int INFO = 1;
+    public static int DEBUG = 2;
+    public static int ERROR = 3;
+
+    LogProcessor nextLoggerProcessor;
+
+    LogProcessor(LogProcessor loggerProcessor) {
+
+        this.nextLoggerProcessor = loggerProcessor;
+
+    }
+
+    public void log(int logLevel, String message) {
+
+        if (nextLoggerProcessor != null) {
+            nextLoggerProcessor.log(logLevel, message);
+        }
+    }
+}
+
+
+public class InfoLogProcessor extends LogProcessor{
+
+    InfoLogProcessor(LogProcessor nexLogProcessor){
+        super(nexLogProcessor);
+    }
+
+    public void log(int logLevel,String message){
+
+        if(logLevel == INFO) {
+            System.out.println("INFO: " + message);
+        } else{
+
+            super.log(logLevel, message);
+        }
+    }}
+
+Similarly others 
+
+public class Main {
+
+    public static void main(String args[]) {
+
+        LogProcessor logObject = new InfoLogProcessor(new DebugLogProcessor(new ErrorLogProcessor(null)));
+
+        logObject.log(LogProcessor.ERROR, "exception happens");
+        logObject.log(LogProcessor.DEBUG, "need to debug this ");
+        logObject.log(LogProcessor.INFO, "just for info ");
+
+    }
+}
+
+
+
+Explanation
+Handler Interface: Logger is the abstract handler that defines the method logMessage and holds a reference to the next handler in the chain.
+ConcreteHandler: DebugLogger, InfoLogger, and ErrorLogger are concrete handlers that handle messages at their respective levels. If they can't handle a message, they pass it to the next logger in the chain.
+Client: The client sets up the chain of loggers and initiates log requests.
+Benefits of Chain of Responsibility
+Decoupling: The sender of a request is decoupled from the receiver, allowing multiple potential handlers.
+Flexibility: Handlers can be added or removed dynamically, and the chain can be changed without modifying the client code.
+Responsibility Sharing: Multiple handlers can process a request, and a request can be passed along until it is handled.
+Summary
+The Chain of Responsibility pattern is effectively demonstrated by the logging example, where different levels of loggers form a chain to handle messages of varying severities. This pattern decouples the sender and receiver of requests, promotes flexibility, and allows dynamic changes to the chain of handlers.

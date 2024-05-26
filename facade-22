@@ -1,0 +1,96 @@
+Used to handle cases where complexity needs to be hidden from client
+
+
+The Facade design pattern is a structural pattern that provides a simplified interface to a complex system of classes, interfaces, or subsystems. 
+It encapsulates a set of interfaces and provides a higher-level interface that makes the subsystem easier to use.
+This pattern promotes loose coupling by hiding the complexities of the subsystem from clients.
+
+Key Components of the Facade Pattern
+Facade: This is the main interface that clients interact with. It provides a unified interface to a set of interfaces in the subsystem.
+Subsystem Classes: These are the various classes, interfaces, or subsystems that the facade encapsulates. They perform the actual work requested by the client.
+Client: The class that interacts with the facade to access the subsystem's functionality.
+Example: Facade Pattern for a Home Theater System
+Let's consider an example of a home theater system consisting of multiple devices, such as a DVD player, a projector, and a sound system. The Facade pattern can be used to provide a simplified interface for controlling these devices.
+
+Facade
+This class provides a simplified interface for controlling the home theater system.
+
+java
+Copy code
+class HomeTheaterFacade {
+    private DVDPlayer dvdPlayer;
+    private Projector projector;
+    private SoundSystem soundSystem;
+
+    public HomeTheaterFacade() {
+        this.dvdPlayer = new DVDPlayer();
+        this.projector = new Projector();
+        this.soundSystem = new SoundSystem();
+    }
+
+    public void watchMovie(String movie) {
+        System.out.println("Get ready to watch a movie...");
+        projector.turnOn();
+        soundSystem.turnOn();
+        dvdPlayer.play(movie);
+    }
+
+    public void endMovie() {
+        System.out.println("Shutting down the home theater...");
+        dvdPlayer.stop();
+        soundSystem.turnOff();
+        projector.turnOff();
+    }
+}
+Subsystem Classes
+These are the classes representing the various devices in the home theater system.
+
+java
+Copy code
+class DVDPlayer {
+    public void play(String movie) {
+        System.out.println("Playing movie: " + movie);
+    }
+
+    public void stop() {
+        System.out.println("Stopping DVD player");
+    }
+}
+
+class Projector {
+    public void turnOn() {
+        System.out.println("Turning on projector");
+    }
+
+    public void turnOff() {
+        System.out.println("Turning off projector");
+    }
+}
+
+class SoundSystem {
+    public void turnOn() {
+        System.out.println("Turning on sound system");
+    }
+
+    public void turnOff() {
+        System.out.println("Turning off sound system");
+    }
+}
+Client Code
+This is the client code that uses the facade to control the home theater system.
+
+java
+Copy code
+public class FacadePatternDemo {
+    public static void main(String[] args) {
+        HomeTheaterFacade homeTheater = new HomeTheaterFacade();
+
+        homeTheater.watchMovie("Inception");
+        System.out.println("Enjoying the movie...");
+
+        homeTheater.endMovie();
+        System.out.println("Movie ended");
+    }
+}
+Explanation
+In this example, the HomeTheaterFacade provides a simplified interface for controlling the home theater system. Clients interact with the facade to perform actions such as watching a movie (watchMovie) or ending the movie (endMovie). Behind the scenes, the facade delegates the requests to the appropriate subsystem classes (DVDPlayer, Projector, SoundSystem), hiding their complexities from the client.

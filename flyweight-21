@@ -1,0 +1,86 @@
+Popularly used for designing text editor etc, useful when we want to reduce memory usage by sharing dtaa between objects etc
+
+ The Flyweight design pattern is a structural pattern that aims to minimize memory usage by sharing as much data as possible with similar objects. It is particularly useful when dealing with a large number of objects that have many similar parts, allowing those parts to be shared rather than duplicated.
+
+Key Components of the Flyweight Pattern
+Flyweight: The interface or abstract class that defines the common interface for objects that can be shared.
+ConcreteFlyweight: The class that implements the Flyweight interface and adds storage for intrinsic state, if any.
+UnsharedConcreteFlyweight: A class whose instances are not shared. This class is optional.
+FlyweightFactory: The factory class that creates and manages Flyweight objects, ensuring that shared objects are properly managed.
+Client: The class that uses Flyweight objects, typically maintaining the extrinsic state.
+Example: Flyweight Pattern for a Text Editor
+Let's consider an example where we have a text editor that needs to display characters. Instead of creating a new object for every character, we can share the objects for characters, reducing the memory footprint.
+
+Flyweight Interface
+This is the interface for our flyweight objects.
+
+java
+Copy code
+interface CharacterFlyweight {
+    void display(int fontSize, String color);
+}
+ConcreteFlyweight
+This class implements the flyweight interface and stores intrinsic state.
+
+java
+Copy code
+class ConcreteCharacter implements CharacterFlyweight {
+    private final char character; // intrinsic state
+
+    public ConcreteCharacter(char character) {
+        this.character = character;
+    }
+
+    @Override
+    public void display(int fontSize, String color) {
+        System.out.println("Character: " + character + ", Font size: " + fontSize + ", Color: " + color);
+    }
+}
+FlyweightFactory
+This class manages flyweight objects, ensuring that they are shared properly.
+
+java
+Copy code
+import java.util.HashMap;
+import java.util.Map;
+
+class CharacterFlyweightFactory {
+    private Map<Character, CharacterFlyweight> flyweights = new HashMap<>();
+
+    public CharacterFlyweight getFlyweight(char character) {
+        CharacterFlyweight flyweight = flyweights.get(character);
+        if (flyweight == null) {
+            flyweight = new ConcreteCharacter(character);
+            flyweights.put(character, flyweight);
+        }
+        return flyweight;
+    }
+}
+Client Code
+This is the client code that uses the flyweight objects.
+
+java
+Copy code
+public class FlyweightPatternDemo {
+    public static void main(String[] args) {
+        CharacterFlyweightFactory factory = new CharacterFlyweightFactory();
+
+        String text = "Hello Flyweight";
+        int[] fontSizes = {12, 14, 16, 18, 20};
+        String[] colors = {"Red", "Green", "Blue", "Black", "White"};
+
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            int fontSize = fontSizes[i % fontSizes.length];
+            String color = colors[i % colors.length];
+
+            CharacterFlyweight flyweight = factory.getFlyweight(character);
+            flyweight.display(fontSize, color);
+        }
+    }
+}
+Explanation
+CharacterFlyweight (Flyweight): An interface that defines a method display to display the character with extrinsic state.
+ConcreteCharacter (ConcreteFlyweight): Implements the CharacterFlyweight interface and stores the intrinsic state (the character itself).
+CharacterFlyweightFactory (FlyweightFactory): Manages a pool of CharacterFlyweight objects, ensuring that each character is shared properly.
+FlyweightPatternDemo (Client): The client code that uses the CharacterFlyweightFactory to get flyweight objects and display them with various extrinsic states (font size and color).

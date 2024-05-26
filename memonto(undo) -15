@@ -1,0 +1,92 @@
+The Memento design pattern is a behavioral design pattern that allows an object to capture its internal state at a particular point in time so that it can be restored to that state later. This pattern is useful for implementing undo mechanisms or saving and restoring the state of an object.
+
+Key Components of the Memento Pattern
+Memento: Stores the internal state of the Originator. The Memento should only be accessible to the Originator and not to other objects.
+Originator: The object whose state needs to be saved and restored. It creates a Memento containing its current state and uses the Memento to restore its state.
+Caretaker: Responsible for keeping the Memento. The Caretaker does not modify or inspect the contents of the Memento.
+Example: Text Editor with Undo Feature
+Let's implement a simple text editor that supports an undo operation using the Memento pattern.
+
+Memento Class
+java
+Copy code
+class TextEditorMemento {
+    private final String state;
+
+    public TextEditorMemento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+Originator Class
+java
+Copy code
+class TextEditor {
+    private StringBuilder content;
+
+    public TextEditor() {
+        this.content = new StringBuilder();
+    }
+
+    public void write(String text) {
+        content.append(text);
+    }
+
+    public String getContent() {
+        return content.toString();
+    }
+
+    public TextEditorMemento save() {
+        return new TextEditorMemento(content.toString());
+    }
+
+    public void restore(TextEditorMemento memento) {
+        content = new StringBuilder(memento.getState());
+    }
+}
+Caretaker Class
+java
+Copy code
+import java.util.Stack;
+
+class TextEditorCaretaker {
+    private final Stack<TextEditorMemento> mementos = new Stack<>();
+
+    public void saveState(TextEditor textEditor) {
+        mementos.push(textEditor.save());
+    }
+
+    public void undo(TextEditor textEditor) {
+        if (!mementos.isEmpty()) {
+            textEditor.restore(mementos.pop());
+        } else {
+            System.out.println("No states to undo.");
+        }
+    }
+}
+Client Code
+java
+Copy code
+public class MementoPatternDemo {
+    public static void main(String[] args) {
+        TextEditor textEditor = new TextEditor();
+        TextEditorCaretaker caretaker = new TextEditorCaretaker();
+
+        textEditor.write("Hello, ");
+        caretaker.saveState(textEditor);
+
+        textEditor.write("World!");
+        caretaker.saveState(textEditor);
+
+        System.out.println("Current Content: " + textEditor.getContent());
+
+        caretaker.undo(textEditor);
+        System.out.println("After Undo: " + textEditor.getContent());
+
+        caretaker.undo(textEditor);
+        System.out.println("After Second Undo: " + textEditor.getContent());
+    }
+}

@@ -1,0 +1,258 @@
+1. Single Responsibility Principle (SRP)
+A class should have only one reason to change, meaning it should have only one job or responsibility.
+
+Example:
+
+// Bad Example
+public class Employee {
+    public String name;
+    public double salary;
+
+    public void calculateSalary() {
+        // Logic for calculating salary
+    }
+
+    public void save() {
+        // Logic for saving employee details to a database
+    }
+}
+
+// Good Example
+public class Employee {
+    public String name;
+    public double salary;
+
+    public void calculateSalary() {
+        // Logic for calculating salary
+    }
+}
+
+public class EmployeeRepository {
+    public void save(Employee employee) {
+        // Logic for saving employee details to a database
+    }
+}
+
+Example in Java: 
+Consider a BankAccount class that handles both the logic for depositing and withdrawing funds, as well as the logic for generating account statements. 
+This would violate the SRP, as the BankAccount class has two reasons to change: the logic for handling transactions and the logic for generating statements. 
+A better design would be to separate these responsibilities into two different classes, such as BankAccountTransactionManager and BankAccountStatementGenerator.
+
+
+2. Open/Closed Principle (OCP)
+Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+
+Example:
+
+// Bad Example
+public class Rectangle {
+    public double width;
+    public double height;
+}
+
+public class AreaCalculator {
+    public double calculateArea(Object shape) {
+        double area = 0;
+        if (shape instanceof Rectangle) {
+            Rectangle rectangle = (Rectangle) shape;
+            area = rectangle.width * rectangle.height;
+        }
+        return area;
+    }
+}
+
+// Good Example
+public abstract class Shape {
+    public abstract double calculateArea();
+}
+
+public class Rectangle extends Shape {
+    public double width;
+    public double height;
+
+    @Override
+    public double calculateArea() {
+        return width * height;
+    }
+}
+
+public class AreaCalculator {
+    public double calculateArea(Shape shape) {
+        return shape.calculateArea();
+    }
+}
+
+Example in Java: Imagine you have a ShapeCalculator class that calculates the area of different shapes. 
+If you want to add a new shape type, you should be able to do so without modifying the existing ShapeCalculator class. 
+You can achieve this by introducing an abstract Shape class and having concrete shape classes (e.g., Circle, Rectangle, Triangle) extend it, 
+each with its own implementation of the area calculation.
+
+3. Liskov Substitution Principle (LSP)
+Subtypes must be substitutable for their base types without altering the correctness of the program.
+
+Jo jo cheezen parent me chalti h , wo wo cheezen child me bhi chalni chhaiye 
+sub class should always add capability never reduce it 
+
+Example:
+
+// Bad Example
+public class Bird {
+    public void fly() {
+        System.out.println("Bird is flying");
+    }
+}
+
+public class Ostrich extends Bird {
+    @Override
+    public void fly() {
+        throw new UnsupportedOperationException("Ostriches can't fly");
+    }
+}
+
+// Good Example
+public abstract class Bird {
+    public abstract void move();
+}
+
+public class Sparrow extends Bird {
+    @Override
+    public void move() {
+        System.out.println("Sparrow is flying");
+    }
+}
+
+public class Ostrich extends Bird {
+    @Override
+    public void move() {
+        System.out.println("Ostrich is running");
+    }
+}
+4. Interface Segregation Principle (ISP)
+Clients should not be forced to depend on interfaces they do not use. It's better to have multiple specific interfaces than a single general-purpose interface.
+
+clients ko aise method na implemenet karne pade jiski jaroorat na ho 
+Example:
+
+java
+Copy code
+// Bad Example
+public interface Worker{
+    void work();
+    void eat();
+}
+
+public class HumanWorker implements Worker {
+    @Override
+    public void work() {
+        System.out.println("Human is working");
+    }
+
+    @Override
+    public void eat() {
+        System.out.println("Human is eating");
+    }
+}
+
+public class RobotWorker implements Worker {
+    @Override
+    public void work() {
+        System.out.println("Robot is working");
+    }
+
+    @Override
+    public void eat() {
+        throw new UnsupportedOperationException("Robots don't eat");
+    }
+}
+
+// Good Example
+public interface Workable {
+    void work();
+}
+
+public interface Eatable {
+    void eat();
+}
+
+public class HumanWorker implements Workable, Eatable {
+    @Override
+    public void work() {
+        System.out.println("Human is working");
+    }
+
+    @Override
+    public void eat() {
+        System.out.println("Human is eating");
+    }
+}
+
+public class RobotWorker implements Workable {
+    @Override
+    public void work() {
+        System.out.println("Robot is working");
+    }
+}
+5. Dependency Inversion Principle (DIP)
+High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details. Details should depend on abstractions.
+
+Example:
+
+java
+Copy code
+// Bad Example
+public class LightBulb {
+    public void turnOn() {
+        System.out.println("LightBulb is turned on");
+    }
+
+    public void turnOff() {
+        System.out.println("LightBulb is turned off");
+    }
+}
+
+public class Switch {
+    private LightBulb lightBulb;
+
+    public Switch(LightBulb lightBulb) {
+        this.lightBulb = lightBulb;
+    }
+
+    public void operate() {
+        lightBulb.turnOn();
+    }
+}
+
+// Good Example
+public interface Switchable {
+    void turnOn();
+    void turnOff();
+}
+
+public class LightBulb implements Switchable {
+    @Override
+    public void turnOn() {
+        System.out.println("LightBulb is turned on");
+    }
+
+    @Override
+    public void turnOff() {
+        System.out.println("LightBulb is turned off");
+    }
+}
+
+public class Switch {
+    private Switchable device;
+
+    public Switch(Switchable device) {
+        this.device = device;
+    }
+
+    public void operate() {
+        device.turnOn();
+    }
+}
+
+Example in Java: Consider a EmailSender class that sends emails using a specific email service provider, such as Gmail or Outlook. 
+If you directly create an instance of the email service provider in the EmailSender class, you are tightly coupling the EmailSender class to a specific implementation.
+Instead, you should introduce an EmailService interface and have the EmailSender class depend on this interface. 
+This way, the EmailSender class can be used with any implementation of the EmailService interface, making it more flexible and testable

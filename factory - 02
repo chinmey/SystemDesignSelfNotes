@@ -1,0 +1,89 @@
+Factory is a creational design pattern , it is useful when a class has multiple implementations and which implementation is needed by client is decided based on 
+condition.
+
+
+Let's consider an example where we have different types of shapes (Circle, Rectangle, and Square), and we want to create instances of these shapes using a 
+factory method.
+
+Step 1: Define the Product Interface
+
+public interface Shape {
+    void draw();
+}
+Step 2: Create Concrete Products
+
+public class Circle implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Circle");
+    }
+}
+
+public class Rectangle implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Rectangle");
+    }
+}
+
+public class Square implements Shape {
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Square");
+    }
+}
+Step 3: Create the Factory Class
+
+public class ShapeFactory {
+    
+    // Factory method to create instances of different shapes
+    public Shape getShape(String shapeType) {
+        if (shapeType == null) {
+            return null;
+        }
+        if (shapeType.equalsIgnoreCase("CIRCLE")) {
+            return new Circle();
+        } else if (shapeType.equalsIgnoreCase("RECTANGLE")) {
+            return new Rectangle();
+        } else if (shapeType.equalsIgnoreCase("SQUARE")) {
+            return new Square();
+        }
+        return null;
+    }
+}
+Step 4: Use the Factory to Create Objects
+
+public class FactoryPatternDemo {
+    public static void main(String[] args) {
+        ShapeFactory shapeFactory = new ShapeFactory();
+
+        // Get an object of Circle and call its draw method
+        Shape shape1 = shapeFactory.getShape("CIRCLE");
+        shape1.draw();
+
+        // Get an object of Rectangle and call its draw method
+        Shape shape2 = shapeFactory.getShape("RECTANGLE");
+        shape2.draw();
+
+        // Get an object of Square and call its draw method
+        Shape shape3 = shapeFactory.getShape("SQUARE");
+        shape3.draw();
+    }
+}
+
+Good practical example :: storage me fos5 me aur fos6 me size nikalne (eq draw) ka tarika alag h , so ek factory banate h jo based on fos level (condition) kon sa 
+object banega yeh decide karta h
+
+------------
+
+Abstract factory -- it is basically factory of factories (ek class hogi jo do factoty class rakhegi)
+
+public interface somethingfactory() {
+    public class shapefactory()
+    public class shapeAreafactory()
+}
+
+--------------
+
+
+Null behaviour design pattern also mostly uses factory

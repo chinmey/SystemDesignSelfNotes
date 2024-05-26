@@ -1,0 +1,208 @@
+This is used when code needs to be reused among childrens of a parent 
+
+ex :
+
+Vehicle() {           
+    drive()
+}
+
+normalcar implements vehicle {}
+
+luxurycar implements vehicle {
+    @Override
+    drive() {
+
+    }
+}
+
+offroadcar implements vehicle {
+   @Override
+   drive() {
+
+   }
+}
+
+it may so happen that both offroadcar and luxurycar are using the same new overriden method but they share it 
+
+
+Step 1: Define the Strategy Interface
+First, we'll define the DriveStrategy interface which will declare the drive method.
+
+java
+Copy code
+public interface DriveStrategy {
+    void drive();
+}
+Step 2: Implement Concrete Strategies
+Next, we will create different concrete strategies implementing the DriveStrategy interface.
+
+java
+Copy code
+public class NormalDriveStrategy implements DriveStrategy {
+    @Override
+    public void drive() {
+        System.out.println("Driving in normal mode.");
+    }
+}
+
+public class SportsDriveStrategy implements DriveStrategy {
+    @Override
+    public void drive() {
+        System.out.println("Driving in sports mode.");
+    }
+}
+
+public class EcoDriveStrategy implements DriveStrategy {
+    @Override
+    public void drive() {
+        System.out.println("Driving in eco mode.");
+    }
+}
+Step 3: Implement the Context
+Now, we'll create the Vehicle class which will use a DriveStrategy.
+
+java
+Copy code
+public class Vehicle {
+    private DriveStrategy driveStrategy;
+
+    // Constructor
+    public Vehicle(DriveStrategy driveStrategy) {
+        this.driveStrategy = driveStrategy;
+    }
+
+    // Method to set a different strategy at runtime
+    public void setDriveStrategy(DriveStrategy driveStrategy) {
+        this.driveStrategy = driveStrategy;
+    }
+
+    // Method to execute the drive strategy
+    public void drive() {
+        driveStrategy.drive();
+    }
+}
+Step 4: Use the Strategy Pattern
+Finally, let's demonstrate the use of the Vehicle class with different driving strategies.
+
+java
+Copy code
+public class StrategyPatternVehicleDemo {
+    public static void main(String[] args) {
+        // Create vehicle with normal drive strategy
+        Vehicle vehicle = new Vehicle(new NormalDriveStrategy());
+        vehicle.drive(); // Output: Driving in normal mode.
+
+        // Change to sports drive strategy
+        vehicle.setDriveStrategy(new SportsDriveStrategy());
+        vehicle.drive(); // Output: Driving in sports mode.
+
+        // Change to eco drive strategy
+        vehicle.setDriveStrategy(new EcoDriveStrategy());
+        vehicle.drive(); // Output: Driving in eco mode.
+    }
+}
+
+
+----------------------------------------------------
+
+Let’s consider an example where we need different sorting strategies.
+
+Step 1: Define the Strategy Interface
+java
+Copy code
+public interface SortStrategy {
+    void sort(int[] numbers);
+}
+Step 2: Implement Concrete Strategies
+java
+Copy code
+public class BubbleSortStrategy implements SortStrategy {
+    @Override
+    public void sort(int[] numbers) {
+        // Implementation of bubble sort
+        int n = numbers.length;
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (numbers[j] > numbers[j + 1]) {
+                    // swap arr[j] and arr[j+1]
+                    int temp = numbers[j];
+                    numbers[j] = numbers[j + 1];
+                    numbers[j + 1] = temp;
+                }
+            }
+        }
+    }
+}
+
+public class QuickSortStrategy implements SortStrategy {
+    @Override
+    public void sort(int[] numbers) {
+        // Implementation of quick sort
+        quickSort(numbers, 0, numbers.length - 1);
+    }
+
+    private void quickSort(int[] array, int low, int high) {
+        if (low < high) {
+            int pi = partition(array, low, high);
+            quickSort(array, low, pi - 1);
+            quickSort(array, pi + 1, high);
+        }
+    }
+
+    private int partition(int[] array, int low, int high) {
+        int pivot = array[high];
+        int i = (low - 1);
+        for (int j = low; j < high; j++) {
+            if (array[j] <= pivot) {
+                i++;
+                int temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        int temp = array[i + 1];
+        array[i + 1] = array[high];
+        array[high] = temp;
+        return i + 1;
+    }
+}
+Step 3: Implement the Context
+java
+Copy code
+public class SortContext {
+    private SortStrategy strategy;
+
+    // Constructor
+    public SortContext(SortStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    // Method to set a different strategy at runtime
+    public void setStrategy(SortStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    // Method to execute the sorting algorithm
+    public void executeStrategy(int[] numbers) {
+        strategy.sort(numbers);
+    }
+}
+Step 4: Use the Strategy Pattern
+java
+Copy code
+public class StrategyPatternDemo {
+    public static void main(String[] args) {
+        int[] numbers = {5, 2, 9, 1, 5, 6};
+
+        // Using Bubble Sort
+        SortContext context = new SortContext(new BubbleSortStrategy());
+        context.executeStrategy(numbers);
+        System.out.println("Bubble Sorted: " + Arrays.toString(numbers));
+
+        // Using Quick Sort
+        numbers = new int[]{5, 2, 9, 1, 5, 6}; // Resetting array
+        context.setStrategy(new QuickSortStrategy());
+        context.executeStrategy(numbers);
+        System.out.println("Quick Sorted: " + Arrays.toString(numbers));
+    }
+}

@@ -1,0 +1,208 @@
+The Command Design Pattern is a behavioral design pattern in which an object is used to encapsulate all information needed to perform an action or trigger an event at a later time. This information includes the method to call, the method's arguments, and the object to which the method belongs.
+
+
+Bad Example
+In the bad example, the RemoteControl class directly interacts with the Light and Fan objects, mixing the command invocation logic with the command execution logic. This creates a tightly coupled system that is difficult to extend or modify.
+
+Bad Example Code
+java
+Copy code
+// Receiver class
+class Light {
+    public void turnOn() {
+        System.out.println("The light is on");
+    }
+
+    public void turnOff() {
+        System.out.println("The light is off");
+    }
+}
+
+// Receiver class
+class Fan {
+    public void start() {
+        System.out.println("The fan is starting");
+    }
+
+    public void stop() {
+        System.out.println("The fan is stopping");
+    }
+}
+
+// Invoker class (bad implementation)
+class RemoteControl {
+    private Light light;
+    private Fan fan;
+
+    public RemoteControl(Light light, Fan fan) {
+        this.light = light;
+        this.fan = fan;
+    }
+
+    public void pressButton(String action) {
+        if (action.equalsIgnoreCase("lightOn")) {
+            light.turnOn();
+        } else if (action.equalsIgnoreCase("lightOff")) {
+            light.turnOff();
+        } else if (action.equalsIgnoreCase("fanStart")) {
+            fan.start();
+        } else if (action.equalsIgnoreCase("fanStop")) {
+            fan.stop();
+        } else {
+            System.out.println("Unknown action");
+        }
+    }
+}
+
+// Client code
+public class CommandPatternBadDemo {
+    public static void main(String[] args) {
+        Light livingRoomLight = new Light();
+        Fan ceilingFan = new Fan();
+        RemoteControl remote = new RemoteControl(livingRoomLight, ceilingFan);
+
+        remote.pressButton("lightOn");   // Output: The light is on
+        remote.pressButton("fanStart");  // Output: The fan is starting
+    }
+}
+Issues with the Bad Example
+Tight Coupling: The RemoteControl class is tightly coupled with the Light and Fan classes. Any change in these classes requires changes in the RemoteControl class.
+Lack of Extensibility: Adding a new device (e.g., a TV) requires modifying the RemoteControl class, violating the Open/Closed Principle.
+No Command Abstraction: The code does not use the Command Pattern, which means commands are not encapsulated in separate objects. This reduces flexibility and reusability.
+Good Example
+In the good example, we properly implement the Command Pattern. Commands are encapsulated in separate objects, and the RemoteControl class interacts with these command objects rather than directly with the receivers. This results in a more flexible and extensible design.
+
+Good Example Code
+java
+Copy code
+// Command Interface
+interface Command {
+    void execute();
+}
+
+// Receiver class
+class Light {
+    public void turnOn() {
+        System.out.println("The light is on");
+    }
+
+    public void turnOff() {
+        System.out.println("The light is off");
+    }
+}
+
+// Concrete Command for turning on the light
+class LightOnCommand implements Command {
+    private Light light;
+
+    public LightOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+// Concrete Command for turning off the light
+class LightOffCommand implements Command {
+    private Light light;
+
+    public LightOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+// Receiver class
+class Fan {
+    public void start() {
+        System.out.println("The fan is starting");
+    }
+
+    public void stop() {
+        System.out.println("The fan is stopping");
+    }
+}
+
+// Concrete Command for starting the fan
+class FanStartCommand implements Command {
+    private Fan fan;
+
+    public FanStartCommand(Fan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        fan.start();
+    }
+}
+
+// Concrete Command for stopping the fan
+class FanStopCommand implements Command {
+    private Fan fan;
+
+    public FanStopCommand(Fan fan) {
+        this.fan = fan;
+    }
+
+    @Override
+    public void execute() {
+        fan.stop();
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client code
+public class CommandPatternGoodDemo {
+    public static void main(String[] args) {
+        // Create receivers
+        Light livingRoomLight = new Light();
+        Fan ceilingFan = new Fan();
+
+        // Create concrete commands
+        Command lightOn = new LightOnCommand(livingRoomLight);
+        Command lightOff = new LightOffCommand(livingRoomLight);
+        Command fanStart = new FanStartCommand(ceilingFan);
+        Command fanStop = new FanStopCommand(ceilingFan);
+
+        // Create invoker
+        RemoteControl remote = new RemoteControl();
+
+        // Execute commands
+        remote.setCommand(lightOn);
+        remote.pressButton();  // Output: The light is on
+
+        remote.setCommand(lightOff);
+        remote.pressButton();  // Output: The light is off
+
+        remote.setCommand(fanStart);
+        remote.pressButton();  // Output: The fan is starting
+
+        remote.setCommand(fanStop);
+        remote.pressButton();  // Output: The fan is stopping
+    }
+}
+Benefits of the Good Example
+Loose Coupling: The RemoteControl class is decoupled from the Light and Fan classes. It only interacts with Command objects.
+Extensibility: New commands can be added without modifying the existing code. For example, adding a TVOnCommand is straightforward and does not affect other classes.
+Command Abstraction: Commands are encapsulated in separate objects, promoting flexibility and reusability.
+Single Responsibility: Each class has a single responsibility. The RemoteControl class handles command execution, while each command class encapsulates specific actions.

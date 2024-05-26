@@ -1,0 +1,128 @@
+Prototype/cloning design pattern : is pattern to create a object by copying object of another class . 
+This is useful when creating a new object is expensive and instead we just copy.
+
+The Prototype Design Pattern is a creational pattern that allows creating new objects by copying an existing object, known as the prototype. 
+This pattern is particularly useful when the creation of an object is costly (in terms of time or resources) and there are only a few variations of the object. 
+It involves implementing a prototype interface with a method for cloning itself.
+
+basically ek clone method ka interface bana dena h
+
+Key Concepts
+Prototype: An interface or abstract class with a method to clone itself.
+Concrete Prototype: A class that implements the cloning method from the prototype interface.
+Client: The class that requests a new object by cloning a prototype.
+Example in Java
+Let's consider an example where we have a Shape prototype.
+
+Step 1: Define the Prototype Interface
+java
+Copy code
+public interface Shape extends Cloneable {
+    Shape clone();
+    void draw();
+}
+Step 2: Create Concrete Prototypes
+java
+Copy code
+public class Circle implements Shape {
+    private int radius;
+
+    public Circle(int radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public Shape clone() {
+        return new Circle(this.radius);
+    }
+
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Circle with radius " + radius);
+    }
+}
+
+public class Rectangle implements Shape {
+    private int width;
+    private int height;
+
+    public Rectangle(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public Shape clone() {
+        return new Rectangle(this.width, this.height);
+    }
+
+    @Override
+    public void draw() {
+        System.out.println("Drawing a Rectangle with width " + width + " and height " + height);
+    }
+}
+Step 3: Use the Prototype
+java
+Copy code
+public class PrototypePatternDemo {
+    public static void main(String[] args) {
+        Shape circlePrototype = new Circle(5);
+        Shape clonedCircle = circlePrototype.clone();
+        clonedCircle.draw();
+
+        Shape rectanglePrototype = new Rectangle(10, 20);
+        Shape clonedRectangle = rectanglePrototype.clone();
+        clonedRectangle.draw();
+    }
+}
+
+----------------------------------------------
+
+
+The Singleton Design Pattern is a creational pattern that ensures a class has only one instance and provides a global point of access to it. 
+This pattern is useful when exactly one object is needed to coordinate actions across the system, such as a configuration manager or a logging class.
+This is useful in db connection etc
+
+Key Concepts
+Singleton: A class with a private constructor and a static method to provide access to the single instance.
+Lazy Initialization: The instance is created only when it is needed.
+Thread Safety: Ensuring that the singleton instance is created safely in a multi-threaded environment.
+Example in Java
+Step 1: Create the Singleton Class
+java
+Copy code
+public class Singleton {
+    // The single instance of the class
+    private static Singleton instance;
+
+    // Private constructor to prevent instantiation
+    private Singleton() {
+        if (instance != null) { // ensures singleton can't be broken by reflection
+            throw new IllegalStateException("Instance already exists!");
+        }
+    }
+
+    // Public method to provide access to the instance
+    public static Singleton getInstance() {
+        if (instance == null) { // Lazy initilisaton
+            synchronized (Singleton.class) {  // Thread safety
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void showMessage() {
+        System.out.println("Hello from the Singleton!");
+    }
+}
+Step 2: Use the Singleton
+public class SingletonPatternDemo {
+    public static void main(String[] args) {
+        // Get the single instance of the Singleton class
+        Singleton singleton = Singleton.getInstance();
+        singleton.showMessage();
+    }
+}

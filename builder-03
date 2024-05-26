@@ -1,0 +1,298 @@
+This is used when we have a complex object with optional fields and instead of creating object in one go we want to create it step by step 
+
+The Builder Design Pattern is a creational design pattern that separates the construction of a complex object from its representation, 
+allowing the same construction process to create different representations. This pattern is particularly useful when an object requires numerous parameters to be set, 
+especially when some of these parameters are optional.
+
+Key Concepts
+Builder: An interface or abstract class defining the steps to construct the product.
+Concrete Builder: A class that implements the Builder interface and constructs the product's parts.
+Product: The complex object being constructed.
+Director (optional): A class that constructs the object using the Builder interface. It is optional and often used to encapsulate the construction process.
+Example: Building a House
+Let's consider an example where we are building different types of houses using the Builder Pattern.
+
+Step 1: Define the Product
+
+public class House {
+    private String foundation;
+    private String structure;
+    private String roof;
+    private boolean hasGarage;
+    private boolean hasSwimmingPool;
+    private boolean hasGarden;
+
+    public House(String foundation, String structure, String roof, boolean hasGarage, boolean hasSwimmingPool, boolean hasGarden) {
+        this.foundation = foundation;
+        this.structure = structure;
+        this.roof = roof;
+        this.hasGarage = hasGarage;
+        this.hasSwimmingPool = hasSwimmingPool;
+        this.hasGarden = hasGarden;
+    }
+
+    @Override
+    public String toString() {
+        return "House{" +
+                "foundation='" + foundation + '\'' +
+                ", structure='" + structure + '\'' +
+                ", roof='" + roof + '\'' +
+                ", hasGarage=" + hasGarage +
+                ", hasSwimmingPool=" + hasSwimmingPool +
+                ", hasGarden=" + hasGarden +
+                '}';
+    }
+}
+Step 2: Define the Builder Interface
+
+public interface HouseBuilder {
+    void buildFoundation();
+    void buildStructure();
+    void buildRoof();
+    void buildGarage();
+    void buildSwimmingPool();
+    void buildGarden();
+    House getHouse();
+}
+Step 3: Create Concrete Builders
+
+public class ConcreteHouseBuilder implements HouseBuilder {
+    private String foundation;
+    private String structure;
+    private String roof;
+    private boolean hasGarage;
+    private boolean hasSwimmingPool;
+    private boolean hasGarden;
+
+    @Override
+    public void buildFoundation() {
+        this.foundation = "Concrete Foundation";
+    }
+
+    @Override
+    public void buildStructure() {
+        this.structure = "Concrete Structure";
+    }
+
+    @Override
+    public void buildRoof() {
+        this.roof = "Concrete Roof";
+    }
+
+    @Override
+    public void buildGarage() {
+        this.hasGarage = true;
+    }
+
+    @Override
+    public void buildSwimmingPool() {
+        this.hasSwimmingPool = true;
+    }
+
+    @Override
+    public void buildGarden() {
+        this.hasGarden = true;
+    }
+
+    @Override
+    public House getHouse() {
+        return new House(foundation, structure, roof, hasGarage, hasSwimmingPool, hasGarden);
+    }
+}
+
+public class WoodenHouseBuilder implements HouseBuilder {
+    private String foundation;
+    private String structure;
+    private String roof;
+    private boolean hasGarage;
+    private boolean hasSwimmingPool;
+    private boolean hasGarden;
+
+    @Override
+    public void buildFoundation() {
+        this.foundation = "Wooden Foundation";
+    }
+
+    @Override
+    public void buildStructure() {
+        this.structure = "Wooden Structure";
+    }
+
+    @Override
+    public void buildRoof() {
+        this.roof = "Wooden Roof";
+    }
+
+    @Override
+    public void buildGarage() {
+        this.hasGarage = false;
+    }
+
+    @Override
+    public void buildSwimmingPool() {
+        this.hasSwimmingPool = false;
+    }
+
+    @Override
+    public void buildGarden() {
+        this.hasGarden = true;
+    }
+
+    @Override
+    public House getHouse() {
+        return new House(foundation, structure, roof, hasGarage, hasSwimmingPool, hasGarden);
+    }
+}
+Step 4: Create the Director (Optional)
+
+public class ConstructionDirector {
+    private HouseBuilder houseBuilder;
+
+    public ConstructionDirector(HouseBuilder houseBuilder) {
+        this.houseBuilder = houseBuilder;
+    }
+
+    public void constructHouse() {
+        houseBuilder.buildFoundation();
+        houseBuilder.buildStructure();
+        houseBuilder.buildRoof();
+        houseBuilder.buildGarage();
+        houseBuilder.buildSwimmingPool();
+        houseBuilder.buildGarden();
+    }
+}
+Step 5: Use the Builder to Construct Objects
+
+public class BuilderPatternDemo {
+    public static void main(String[] args) {
+        // Create a concrete house
+        HouseBuilder concreteHouseBuilder = new ConcreteHouseBuilder();
+        ConstructionDirector concreteDirector = new ConstructionDirector(concreteHouseBuilder);
+        concreteDirector.constructHouse();
+        House concreteHouse = concreteHouseBuilder.getHouse();
+        System.out.println("Concrete House: " + concreteHouse);
+
+        // Create a wooden house
+        HouseBuilder woodenHouseBuilder = new WoodenHouseBuilder();
+        ConstructionDirector woodenDirector = new ConstructionDirector(woodenHouseBuilder);
+        woodenDirector.constructHouse();
+        House woodenHouse = woodenHouseBuilder.getHouse();
+        System.out.println("Wooden House: " + woodenHouse);
+    }
+}
+
+
+----------------------------------------
+
+
+Example with Lombok
+Let's see how Lombok implements the builder pattern with an example. Suppose you have a Person class with multiple fields.
+
+Step 1: Define the Class with Lombok Annotations
+java
+Copy code
+import lombok.Builder;
+import lombok.ToString;
+
+@Builder
+@ToString
+public class Person {
+    private String firstName;
+    private String lastName;
+    private int age;
+    private String address;
+}
+How Lombok Works
+When you annotate your class with @Builder, Lombok automatically generates an inner static Builder class with methods to set each field and a build() method to create an instance of the class.
+
+Step 2: Using the Builder in Client Code
+java
+Copy code
+public class LombokBuilderDemo {
+    public static void main(String[] args) {
+        Person person = Person.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .age(30)
+                .address("123 Main St")
+                .build();
+        
+        System.out.println(person);
+    }
+}
+Output
+css
+Copy code
+Person(firstName=John, lastName=Doe, age=30, address=123 Main St)
+Explanation
+@Builder Annotation: When the @Builder annotation is used, Lombok generates a nested static builder class with methods to set the attributes of the outer class (Person in this case).
+
+Builder Class: The generated builder class has methods corresponding to each field in the Person class, such as firstName(), lastName(), age(), and address(). These methods return the builder itself, enabling method chaining.
+
+Build Method: The build() method in the generated builder class constructs and returns a new Person object with the specified field values.
+
+Generated Code (Simplified)
+When you use the @Builder annotation, Lombok generates code similar to this:
+
+java
+Copy code
+public class Person {
+    private String firstName;
+    private String lastName;
+    private int age;
+    private String address;
+
+    private Person(PersonBuilder builder) {
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.age = builder.age;
+        this.address = builder.address;
+    }
+
+    public static PersonBuilder builder() {
+        return new PersonBuilder();
+    }
+
+    public static class PersonBuilder {
+        private String firstName;
+        private String lastName;
+        private int age;
+        private String address;
+
+        PersonBuilder() {}
+
+        public PersonBuilder firstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public PersonBuilder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public PersonBuilder age(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public PersonBuilder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Person build() {
+            return new Person(this);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                ", address='" + address + '\'' +
+                '}';
+    }
+}

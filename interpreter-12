@@ -1,0 +1,79 @@
+The Interpreter design pattern is used to define a representation of the grammar for a language and an interpreter that uses the representation to interpret sentences in the language. This pattern is particularly useful for simple languages or expressions, such as parsing mathematical expressions, interpreting commands, or evaluating simple scripts.
+
+Components of the Interpreter Pattern
+Abstract Expression: An interface that declares an interpret method.
+Terminal Expression: Implements the abstract expression and handles the interpretation for a specific part of the grammar.
+Nonterminal Expression: Implements the abstract expression and represents a grammar rule that consists of other expressions.
+Context: Contains information that is global to the interpreter.
+Example: Arithmetic Expression Interpreter
+Let's create an example that interprets simple arithmetic expressions involving addition and multiplication.
+
+Abstract Expression
+java
+Copy code
+interface Expression {
+    int interpret();
+}
+Terminal Expression
+java
+Copy code
+class Number implements Expression {
+    private int number;
+
+    public Number(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public int interpret() {
+        return number;
+    }
+}
+Nonterminal Expression
+java
+Copy code
+class Addition implements Expression {
+    private Expression leftExpression;
+    private Expression rightExpression;
+
+    public Addition(Expression leftExpression, Expression rightExpression) {
+        this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
+    }
+
+    @Override
+    public int interpret() {
+        return leftExpression.interpret() + rightExpression.interpret();
+    }
+}
+
+class Multiplication implements Expression {
+    private Expression leftExpression;
+    private Expression rightExpression;
+
+    public Multiplication(Expression leftExpression, Expression rightExpression) {
+        this.leftExpression = leftExpression;
+        this.rightExpression = rightExpression;
+    }
+
+    @Override
+    public int interpret() {
+        return leftExpression.interpret() * rightExpression.interpret();
+    }
+}
+Client Code
+java
+Copy code
+public class InterpreterPatternDemo {
+    public static void main(String[] args) {
+        // Construct the expression (5 + 10) * 2
+        Expression expression = new Multiplication(
+            new Addition(new Number(5), new Number(10)),
+            new Number(2)
+        );
+
+        // Interpret the expression
+        int result = expression.interpret();
+        System.out.println("Result: " + result);  // Output: Result: 30
+    }
+}

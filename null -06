@@ -1,0 +1,96 @@
+Null Object Pattern
+The Null Object Pattern is a behavioral design pattern that uses polymorphism to handle the absence of an object by providing a special null object. 
+This null object adheres to the expected interface but its methods do nothing, allowing it to be used interchangeably with real objects without additional null checks.
+
+Key Concepts
+Null Object Interface: Implements the same interface as the real objects.
+Concrete Null Object: Provides default (do-nothing) implementations of the interface methods.
+Client Code: Uses the null object to avoid null checks and handle missing objects gracefully.
+Example in Java
+Lets consider an example where we need to handle a scenario with various types of customer objects. 
+If a customer does not exist, we return a null object instead of null.
+
+Step 1: Define the Customer Interface
+java
+Copy code
+public interface Customer {
+    String getName();
+    boolean isNull();
+}
+Step 2: Implement Real Customer Class
+java
+Copy code
+public class RealCustomer implements Customer {
+    private String name;
+
+    public RealCustomer(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public boolean isNull() {
+        return false;
+    }
+}
+Step 3: Implement Null Customer Class
+java
+Copy code
+public class NullCustomer implements Customer {
+    @Override
+    public String getName() {
+        return "Not Available in Customer Database";
+    }
+
+    @Override
+    public boolean isNull() {
+        return true;
+    }
+}
+Step 4: Implement Customer Factory to Return Appropriate Customer
+java
+Copy code
+public class CustomerFactory {
+    public static final String[] names = {"Rob", "Joe", "Julie"};
+
+    public static Customer getCustomer(String name) {
+        for (String n : names) {
+            if (n.equalsIgnoreCase(name)) {
+                return new RealCustomer(name);
+            }
+        }
+        return new NullCustomer();
+    }
+}
+Step 5: Use the Null Object Pattern
+java
+Copy code
+public class NullObjectPatternDemo {
+    public static void main(String[] args) {
+        Customer customer1 = CustomerFactory.getCustomer("Rob");
+        Customer customer2 = CustomerFactory.getCustomer("Bob");
+        Customer customer3 = CustomerFactory.getCustomer("Julie");
+        Customer customer4 = CustomerFactory.getCustomer("Laura");
+
+        System.out.println("Customers:");
+        System.out.println(customer1.getName());
+        System.out.println(customer2.getName());
+        System.out.println(customer3.getName());
+        System.out.println(customer4.getName());
+    }
+}
+Explanation
+Customer Interface: Declares the methods getName and isNull.
+RealCustomer Class: Implements the Customer interface for real customers, providing the actual name and returning false for isNull.
+NullCustomer Class: Implements the Customer interface for null customers, providing a default message for the name and returning true for isNull.
+CustomerFactory: Contains logic to return either a RealCustomer or a NullCustomer based on the input.
+Client Code: Uses the Customer objects without worrying about null checks, as NullCustomer objects handle the absence of real customers gracefully.
+Benefits
+Eliminates Null Checks: Client code does not need to handle null values explicitly, reducing potential for NullPointerException.
+Simplifies Code: By using a consistent interface, the code becomes easier to read and maintain.
+Encapsulates Null Behavior: The behavior of the null object is encapsulated, making it easier to manage and modify.
+The Null Object Pattern is particularly useful in scenarios where you need to provide default behavior for missing or non-existent objects, ensuring that the client code remains clean and robust.

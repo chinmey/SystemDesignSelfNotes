@@ -1,0 +1,40 @@
+Is-a Relationship (Inheritance)
+In an "is-a" relationship, one class is a specialized version of another class. This relationship is typically modeled using inheritance, where a subclass (child class) inherits attributes and behaviors from a superclass (parent class).
+
+Example:
+Consider a class hierarchy for animals:
+
+java
+Copy code
+class Animal {
+    // Common attributes and behaviors of all animals
+}
+
+class Dog extends Animal {
+    // Specialized attributes and behaviors specific to dogs
+}
+Here, Dog is-a Animal, meaning it inherits characteristics from the Animal class. The Dog class shares common attributes and behaviors with all animals but may have its own specific attributes and behaviors.
+
+Represented using an arrow with a hollow triangle pointing to the superclass
+
+
+Has-a Relationship (Composition)
+In a "has-a" relationship, one class contains an instance of another class as a member. This relationship is typically modeled using composition, where one class is composed of one or more instances of other classes.
+
+Example:
+Consider a class representing a car:
+
+java
+Copy code
+class Engine {
+    // Attributes and behaviors of the engine
+}
+
+class Car {
+    private Engine engine; // Car has an engine
+
+    // Other attributes and behaviors of the car
+}
+Here, Car has-a Engine, meaning it contains an instance of the Engine class as one of its members. The Car class delegates some functionality related to the engine to the Engine class.
+
+ Represented using a solid diamond at the containing class and a line pointing to the contained class.

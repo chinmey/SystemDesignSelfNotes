@@ -1,0 +1,183 @@
+This is used when only certain operations are permitted at particular state of obj , ex imagine a tv and its state of on and off.
+
+he State design pattern allows an object to alter its behavior when its internal state changes. This pattern is used to encapsulate varying behavior for the same object, based on its internal state, into separate state objects and delegate the behavior to the current state object. The pattern falls under the category of behavioral patterns.
+
+Components of the State Pattern
+Context: The class that contains the current state of the object and delegates the behavior to the state object.
+State: An interface that defines the behavior associated with a particular state of the Context.
+Concrete States: Classes that implement the State interface and define the behavior for a specific state.
+Example: Vending Machine
+Let's create an example of a vending machine that changes its behavior based on its state. The vending machine can be in one of the following states:
+
+No Coin
+Has Coin
+Dispensed
+State Interface
+java
+Copy code
+interface State {
+    void insertCoin();
+    void ejectCoin();
+    void selectProduct();
+    void dispense();
+}
+Concrete States
+java
+Copy code
+class NoCoinState implements State {
+    private VendingMachine vendingMachine;
+
+    public NoCoinState(VendingMachine vendingMachine) {
+        this.vendingMachine = vendingMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("Coin inserted.");
+        vendingMachine.setState(vendingMachine.getHasCoinState());
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("No coin to eject.");
+    }
+
+    @Override
+    public void selectProduct() {
+        System.out.println("Insert coin first.");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("No coin inserted.");
+    }
+}
+
+class HasCoinState implements State {
+    private VendingMachine vendingMachine;
+
+    public HasCoinState(VendingMachine vendingMachine) {
+        this.vendingMachine = vendingMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("Coin already inserted.");
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("Coin ejected.");
+        vendingMachine.setState(vendingMachine.getNoCoinState());
+    }
+
+    @Override
+    public void selectProduct() {
+        System.out.println("Product selected.");
+        vendingMachine.setState(vendingMachine.getDispensedState());
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("Select product first.");
+    }
+}
+
+class DispensedState implements State {
+    private VendingMachine vendingMachine;
+
+    public DispensedState(VendingMachine vendingMachine) {
+        this.vendingMachine = vendingMachine;
+    }
+
+    @Override
+    public void insertCoin() {
+        System.out.println("Please wait, dispensing product.");
+    }
+
+    @Override
+    public void ejectCoin() {
+        System.out.println("Cannot eject coin, product already selected.");
+    }
+
+    @Override
+    public void selectProduct() {
+        System.out.println("Product already selected.");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("Dispensing product.");
+        vendingMachine.setState(vendingMachine.getNoCoinState());
+    }
+}
+Context (VendingMachine)
+java
+Copy code
+class VendingMachine {
+    private State noCoinState;
+    private State hasCoinState;
+    private State dispensedState;
+
+    private State currentState;
+
+    public VendingMachine() {
+        noCoinState = new NoCoinState(this);
+        hasCoinState = new HasCoinState(this);
+        dispensedState = new DispensedState(this);
+
+        currentState = noCoinState; // Initial state
+    }
+
+    public void setState(State state) {
+        currentState = state;
+    }
+
+    public void insertCoin() {
+        currentState.insertCoin();
+    }
+
+    public void ejectCoin() {
+        currentState.ejectCoin();
+    }
+
+    public void selectProduct() {
+        currentState.selectProduct();
+    }
+
+    public void dispense() {
+        currentState.dispense();
+    }
+
+    public State getNoCoinState() {
+        return noCoinState;
+    }
+
+    public State getHasCoinState() {
+        return hasCoinState;
+    }
+
+    public State getDispensedState() {
+        return dispensedState;
+    }
+}
+Client Code
+java
+Copy code
+public class StatePatternDemo {
+    public static void main(String[] args) {
+        VendingMachine vendingMachine = new VendingMachine();
+
+        vendingMachine.insertCoin();
+        vendingMachine.selectProduct();
+        vendingMachine.dispense();
+
+        vendingMachine.insertCoin();
+        vendingMachine.ejectCoin();
+        vendingMachine.dispense();
+    }
+}
+Explanation
+State Interface: Defines the methods that all state classes must implement.
+Concrete States: Implement the state-specific behavior for each state.
+Context (VendingMachine): Manages the current state and delegates behavior to the current state object.

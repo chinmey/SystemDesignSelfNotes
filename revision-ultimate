@@ -1,0 +1,139 @@
+OOPS : https://docs.google.com/document/d/1uv9EdLaG9TK7iNcMneLeEaChzvmXU9Xu_Uv5iZwswFk/edit?tab=t.0
+
+In java interfaces are like pure abstarct classes , since in abstract classes we can have both abstract and non-abstrct methods and they can have constrcutors too interfaces dont support either 
+
+
+Steps to answering any system design problem :
+
+1. Requirement enginerring :: Gather what all requirements are needed for design (all the functionalities wanted) and what all attributes are needed (ex consistency/ availability/ low latency chahiye etc)
+
+2. Capacity Estimation :: What is estimated capacity needed from our end ? 
+(Throughput --> TPS : Read + Write) , (Bandwidth --> how much data should be sent per second), Storage (what is all the storage needed in 1 year ex)
+
+3. Data Modeling :: Figuring out what all would be our attributes/entity/relationship . Keep in mind dont try and create whole db schema as that is too time taking just a rough estimate
+
+4. API Design :: Some endpoints , what will do take as parameter and what will they give back in return etc 
+
+5. Actual system diagram(design) --> Showing High level what all we will have like Load balancer, cache etc 
+
+In step 5 etc we can think of using Low level designs etc
+
+
+
+
+10 Most important design patterns and where is each used ? (Use this channel : https://www.youtube.com/watch?v=v6tpISNjHf8)
+
+
+1. Singleton Pattern
+Purpose: Ensures a class has only one instance and provides a global access point to it.
+Type: Creational
+Key Concepts: Thread safety, lazy initialization, double-checked locking.
+
+Example :: Db connection (its expensive we only want one instance)
+
+Singleinstance --> private constructor hoga(warna koi bhi bana dega object), static instance hoga kyuki object nahi bana sakte, or ek public method hoga 
+jo usko expose karega. lazy init hoga kyuki ek hi instance hona chahiye jab needed wo bhi tabhi , syncronisation use hoga to handle multithreading warna 
+ek instance kaise maintain karenge
+
+
+2. Factory Pattern
+Purpose: Creates objects without specifying the exact class to instantiate.
+Type: Creational
+Key Concepts: Encapsulates object creation logic, promotes loose coupling.
+
+Example : storageComputer interface which calculates storage from FOS-6 / FOS-7
+
+Interface hoga jisme koi ek method hoga ex (sizeCalculator) , uske alag alag concreate implementation honge for diffeent users ab user ko pata nahi hona chahiye ki usko liye kya implementation needed h wahi factory karega wo ek class hoga jo based on some user parameter usko sahi wala object dega
+
+
+3. Builder Pattern
+Purpose: Constructs complex objects step by step, allowing finer control over object creation.
+Type: Creational
+Key Concepts: Separate construction from representation, method chaining.
+
+
+Example --> lombok 
+
+Mostly used jahan ek class me multiple memebers wo ab agar constructor banaeynge to bada ho jayega . So ek builder banate h jo ObjectBuilder class ka instance return karta h and ObjectBuilder class ek static class hoti h jo sabko individually init karti h (public constructor for each one field)
+
+
+
+4. Strategy Pattern
+Purpose: Defines a family of algorithms, encapsulates them, and makes them interchangeable.
+Type: Behavioral
+Key Concepts: Avoids conditional logic, promotes open/closed principle.
+
+Example :: payment staregy
+
+Payment service class h example uske 2 kaam(function) h collect details and take payment ab based on which payment method is used (Card/UPI etc)
+yeh dono differ karenge ab hame if else likhna padega usse badhia h ek streagy interface banao wo yeh sab rakhega apne andar har PaymentMethod implement karega usko ab service me ek object hoga Streagy ka aur wo call kar pyega indovidual impl
+
+
+5. Observer Pattern
+Purpose: Establishes a one-to-many dependency so that when one object changes state, its dependents are notified.
+Type: Behavioral
+Key Concepts: Publish/subscribe mechanism, event-driven systems.
+
+Example :: Notify me buttons 
+
+It is used in cases when something changes all related people should be notified. Subject interface which has methods to add, remove, notify observers
+Observer interface which has a method to **update** all its users. We make notificationManager which implemnets Subject it has list of observers.
+User implements observer and decides what to do when update is sent to it.
+
+This update method can change for various users (ex PhoneUser or EmailUser etc) and thats why this is used otherwise we could have just a list.
+
+
+6. Decorator Pattern (Explain nice : https://www.youtube.com/watch?v=v6tpISNjHf8)
+Purpose: Dynamically adds new behavior to objects without modifying their structure.
+Type: Structural
+Key Concepts: Composition over inheritance, flexible extension of behavior.
+
+**unique** -- decorator relationship with interface is both has-a and is-a
+
+Example :: Let say we are at burger shop which offers various types of burgers and offers various types of toppings and we are asked to calculate cost 
+of burger and implements this whole structure than we use a decorator.
+
+abstract class Burger --> costMethod, its extended by ZingerBurger and TandooriBurger class
+Now we need toppings like mayo, cheese so what we will do is have a BurgerDecorator abstract class which has no method and our toppings will extend this 
+all toppings will have instance of Burger class (because otherwise they are useless)
+
+ex :: Burger myBurger = new ZingerBurger();
+myBurger = new ExtraCheese(myBurger) and so on.
+
+
+7. Adapter Pattern
+Purpose: Converts one interface into another that a client expects, enabling incompatible systems to work together.
+Type: Structural
+Key Concepts: Interface bridging, legacy system integration.
+
+Example :: weightMachine earlier interface used to give in pound now we have weightInKg 
+
+
+8. Proxy Pattern
+Purpose: Provides a surrogate or placeholder for another object to control access to it.
+Type: Structural
+Key Concepts: Access control, lazy initialization, remote proxies.
+
+Ex BankAccount interface with deposit/withdraw , RealBankAccount which allows this , RealBankAccountProxy which is made by client and passed in a set of admins and it has RealBankAccount in its constrcutor and calls it internally while checking access
+
+
+9. Composite Pattern
+Purpose: Composes objects into tree-like structures to represent part-whole hierarchies, allowing clients to treat individual objects and composites uniformly.
+Type: Structural
+Key Concepts: Recursive composition, simplifies client code.
+
+Used when we have a tree like structure . (larger object storing similar smaller object etc ) ex : file system etc
+
+interfaace FileSystemComponent --> showDetails, file implemnets this , directory implements this (but it also has list of all fileComponent and add /remove in them)
+
+
+10. Command Pattern
+Purpose: Encapsulates a request as an object, allowing for parameterization, queuing, and undo/redo functionality.
+Type: Behavioral
+Key Concepts: Encapsulated requests, undo/redo operations.
+
+
+Bonus Patterns (if time permits):
+Template Method: Defines the skeleton of an algorithm, letting subclasses implement steps.
+Mediator: Centralizes communication between components to reduce coupling.
+State: Encapsulates state-based behavior, allowing an object to change its behavior dynamically based on state.
